@@ -76,8 +76,7 @@ headOr ::
   a
   -> List a
   -> a
-headOr def Nil = def
-headOr _ (a:._) = a
+headOr = foldRight const
 
 -- | The product of the elements of a list.
 --
@@ -92,7 +91,7 @@ headOr _ (a:._) = a
 product ::
   List Int
   -> Int
-product = foldRight (*) 1
+product = foldLeft (*) 1
 
 -- | Sum the elements of the list.
 --
@@ -106,7 +105,7 @@ product = foldRight (*) 1
 sum ::
   List Int
   -> Int
-sum = foldRight (+) 0
+sum = foldLeft (+) 0
 
 -- | Return the length of the list.
 --
@@ -147,9 +146,9 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter p = foldRight (\x acc -> if p x
-                                then x :. acc
-                                else acc) Nil
+filter p = foldRight (\x -> if p x
+                            then (x:.)
+                            else id) Nil
 
 -- | Append two lists to a new list.
 --
@@ -167,7 +166,7 @@ filter p = foldRight (\x acc -> if p x
   List a
   -> List a
   -> List a
-xs ++ ys = foldRight (:.) ys xs
+(++) = flip $ foldRight (:.)
 
 infixr 5 ++
 
@@ -255,7 +254,7 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find p = foldRight (\x -> if p x then (Full x <+>) else id) Empty
+find p = foldRight (\x -> if p x then (Full x<+>) else id) Empty
 
 -- | Determine if the length of the given list is greater than 4.
 --
