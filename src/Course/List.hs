@@ -233,11 +233,7 @@ flattenAgain = flatMap id
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional Nil = Full Nil
-seqOptional (x :. xs) =
-  case x of
-    Full a -> bindOptional (\tail -> Full $ a :. tail) (seqOptional xs)
-    Empty -> Empty
+seqOptional = foldRight (A.liftA2 (:.)) (P.pure Nil)
 
 -- | Find the first element in the list matching the predicate.
 --
